@@ -1,8 +1,10 @@
 #include "win.h"
 Win::Win(QWidget *parent):QWidget(parent)
 {
-    //codec = QTextCodec::codecForName("Windows-1251");
-    setWindowTitle("Возведение в квадрат");
+    setWindowTitle("Возведение в квадрат");  // Заголовок окна
+
+    //this->setMinimumWidth(375);
+
     frame = new QFrame(this);
     frame->setFrameShadow(QFrame::Raised);
     frame->setFrameShape(QFrame::Panel);
@@ -11,7 +13,7 @@ Win::Win(QWidget *parent):QWidget(parent)
     StrValidator *v=new StrValidator(inputEdit);
     inputEdit->setValidator(v);
     outputLabel = new QLabel("Результат:", this);
-    outputEdit = new QLineEdit("",this);
+    outputEdit = new QLineEdit("", this);
     nextButton = new QPushButton("Следующее", this);
     exitButton = new QPushButton("Выход", this);
     // компоновка приложения выполняется согласно рисунку 2
@@ -29,23 +31,31 @@ Win::Win(QWidget *parent):QWidget(parent)
     hLayout->addWidget(frame);
     hLayout->addLayout(vLayout2);
     begin();
+    /*
     connect(exitButton,SIGNAL(clicked(bool)),
             this,SLOT(close()));
     connect(nextButton,SIGNAL(clicked(bool)),
             this,SLOT(begin()));
     connect(inputEdit,SIGNAL(returnPressed()),
             this,SLOT(calc()));
+    */
+    connect(exitButton, &QPushButton::clicked,   // 2 способ сигнально-слотовой связи
+            this, &Win::close);
+    connect(nextButton, &QPushButton::clicked,
+            this, &Win::begin);
+    connect(inputEdit, &QLineEdit::returnPressed,
+            this, &Win::calc);
 }
 void Win::begin()
 {
-    inputEdit->clear();
-    nextButton->setEnabled(false);
-    nextButton->setDefault(false);
-    inputEdit->setEnabled(true);
-    outputLabel->setVisible(false);
-    outputEdit->setVisible(false);
-    outputEdit->setEnabled(false);
-    inputEdit->setFocus();
+    inputEdit->clear();  // очищение строки ввода
+    nextButton->setEnabled(false);  // недоступность нажатия кнопки "Следующее"
+    nextButton->setDefault(false);  // убираем выделение кнопки "Следующее"
+    inputEdit->setEnabled(true);  // доступность редактирования строки ввода
+    outputLabel->setVisible(false); // скрываем метку вывода
+    outputEdit->setVisible(false); // скрываем строку вывода
+    outputEdit->setEnabled(false);  // значение false для доступа к редактированию строки вывода
+    inputEdit->setFocus();  // возможность сразу вводить число
 }
 void Win::calc()
 {
@@ -56,13 +66,13 @@ void Win::calc()
     {
         r=a*a;
         str.setNum(r);
-        outputEdit->setText(str);
-        inputEdit->setEnabled(false);
-        outputLabel->setVisible(true);
-        outputEdit->setVisible(true);
-        nextButton->setDefault(true);
-        nextButton->setEnabled(true);
-        nextButton->setFocus();
+        outputEdit->setText(str); // выводит в строке вывода наш результат
+        inputEdit->setEnabled(false); // значение false для доступа к редактированию строки ввода
+        outputLabel->setVisible(true); // видимость метки вывода
+        outputEdit->setVisible(true); // видимость строки вывода
+        nextButton->setDefault(true); // добавляем выделение кнопки "Следующее"
+        nextButton->setEnabled(true); // кнопка "Следующее" доступно для нажатия
+        nextButton->setFocus(); // нажатие кнопки "Следующее" с помощью Enter
     }
     else
         if (!str.isEmpty())
